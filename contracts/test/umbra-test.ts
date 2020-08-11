@@ -6,8 +6,7 @@ import { argumentBytes } from './sample-data';
 const Umbra = contract.fromArtifact('Umbra');
 const TestToken = contract.fromArtifact('TestToken');
 
-const { toWei } = web3.utils;
-const { BN } = web3.utils;
+const { toWei, toBN } = web3.utils;
 
 describe('Umbra', function() {
   const [
@@ -74,7 +73,7 @@ describe('Umbra', function() {
 
   it('should not allow someone to pay less than the toll amount', async () => {
     const toll = await this.umbra.toll();
-    const paymentAmount = toll.sub(new BN('1'));
+    const paymentAmount = toll.sub(toBN('1'));
 
     await expectRevert(
       this.umbra.sendEth(receiver1, ...argumentBytes, { from: payer1, value: paymentAmount }),
@@ -92,10 +91,10 @@ describe('Umbra', function() {
   });
 
   it('should allow someone to pay in eth', async () => {
-    const receiverInitBalance = new BN(await web3.eth.getBalance(receiver1));
+    const receiverInitBalance = toBN(await web3.eth.getBalance(receiver1));
 
     const toll = await this.umbra.toll();
-    const payment = new BN(ethPayment);
+    const payment = toBN(ethPayment);
     const actualPayment = payment.sub(toll);
 
     const receipt = await this.umbra.sendEth(receiver1, ...argumentBytes, {
@@ -103,7 +102,7 @@ describe('Umbra', function() {
       value: ethPayment,
     });
 
-    const receiverPostBalance = new BN(await web3.eth.getBalance(receiver1));
+    const receiverPostBalance = toBN(await web3.eth.getBalance(receiver1));
     const amountReceived = receiverPostBalance.sub(receiverInitBalance);
 
     expect(amountReceived.toString()).to.equal(actualPayment.toString());
@@ -169,7 +168,7 @@ describe('Umbra', function() {
 
   it('should not allow someone to pay with a token without sending the full toll', async () => {
     const toll = await this.umbra.toll();
-    const lessToll = toll.sub(new BN('1'));
+    const lessToll = toll.sub(toBN('1'));
 
     await expectRevert(
       this.umbra.sendToken(
@@ -185,7 +184,7 @@ describe('Umbra', function() {
 
   it('should not allow someone to pay with a token sending more than the toll', async () => {
     const toll = await this.umbra.toll();
-    const moreToll = toll.add(new BN('1'));
+    const moreToll = toll.add(toBN('1'));
 
     await expectRevert(
       this.umbra.sendToken(
@@ -292,12 +291,12 @@ describe('Umbra', function() {
 
   it('should allow the toll collector to move tolls to toll receiver', async () => {
     const toll = await this.umbra.toll();
-    const expectedCollection = toll.mul(new BN('2'));
-    const receiverInitBalance = new BN(await web3.eth.getBalance(tollReceiver));
+    const expectedCollection = toll.mul(toBN('2'));
+    const receiverInitBalance = toBN(await web3.eth.getBalance(tollReceiver));
 
     await this.umbra.collectTolls({ from: tollCollector });
 
-    const receiverPostBalance = new BN(await web3.eth.getBalance(tollReceiver));
+    const receiverPostBalance = toBN(await web3.eth.getBalance(tollReceiver));
     const tollsReceived = receiverPostBalance.sub(receiverInitBalance);
 
     expect(tollsReceived.toString()).to.equal(expectedCollection.toString());
