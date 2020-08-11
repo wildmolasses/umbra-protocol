@@ -4,7 +4,7 @@
   "description": "Contracts for the Umbra Protocol",
   "scripts": {
     "compile": "npx oz compile",
-    "test": "npx oz compile && mocha --exit --timeout 0 test/*-test.js",
+    "test": "npx oz compile && npx ts-mocha -p test/tsconfig.json --exit --timeout 0 test/*-test.ts",
     "gas": "npx oz compile && mocha --exit --timeout 0 test/gastests.js",
     "gas-optimized": "npx oz compile --optimizer on --optimizer-runs 1 && mocha --exit --timeout 0 test/gastests.js"
   },
@@ -12,14 +12,19 @@
     "@opengsn/gsn": "^0.10.0",
     "@openzeppelin/contracts-ethereum-package": "^3.0.0",
     "@truffle/debug-utils": "^4.1.1",
+    "@types/node": "^14.0.27",
     "dotenv": "^8.2.0",
     "truffle": "^5.1.21",
-    "truffle-hdwallet-provider": "^1.0.17"
+    "truffle-hdwallet-provider": "^1.0.17",
+    "typescript": "^3.9.7"
   },
   "devDependencies": {
     "@openzeppelin/cli": "^2.8.0",
     "@openzeppelin/test-environment": "^0.1.4",
     "@openzeppelin/test-helpers": "^0.5.5",
+    "@types/chai": "^4.2.12",
+    "@types/expect": "^24.3.0",
+    "@types/mocha": "^8.0.1",
     "chai": "^4.2.0",
     "eslint": "^7.0.0",
     "eslint-config-airbnb-base": "^14.1.0",
@@ -28,7 +33,8 @@
     "mocha": "^7.1.1",
     "prettier": "^2.0.5",
     "prettier-plugin-solidity": "^1.0.0-alpha.51",
-    "solhint": "^3.0.0"
+    "solhint": "^3.0.0",
+    "ts-mocha": "^7.0.0"
   },
   "author": "",
   "license": "MIT"

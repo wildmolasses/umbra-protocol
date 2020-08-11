@@ -1,15 +1,15 @@
-const { accounts, contract, web3 } = require('@openzeppelin/test-environment');
-const { expectEvent, expectRevert } = require('@openzeppelin/test-helpers');
-const { expect } = require('chai');
+import { accounts, contract, web3 } from '@openzeppelin/test-environment';
+import { expectEvent, expectRevert } from '@openzeppelin/test-helpers';
+import { expect } from 'chai';
+import { argumentBytes } from './sample-data';
 
 const Umbra = contract.fromArtifact('Umbra');
 const TestToken = contract.fromArtifact('TestToken');
-const { argumentBytes } = require('./sample-data');
 
 const { toWei } = web3.utils;
 const { BN } = web3.utils;
 
-describe('Umbra', () => {
+describe('Umbra', function() {
   const [
     owner,
     tollCollector,
