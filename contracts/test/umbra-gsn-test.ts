@@ -1,23 +1,20 @@
-const { accounts, contract, web3 } = require('@openzeppelin/test-environment');
-const { expectEvent, expectRevert } = require('@openzeppelin/test-helpers');
-const { expect } = require('chai');
+import { accounts, contract, web3 } from '@openzeppelin/test-environment';
+import { expectEvent, expectRevert } from '@openzeppelin/test-helpers';
+import { expect } from 'chai';
+import { RelayProvider } from '@opengsn/gsn/dist/src/relayclient/';
+import GsnTestEnvironment from '@opengsn/gsn/dist/src/relayclient/GsnTestEnvironment';
+import { configureGSN } from '@opengsn/gsn/dist/src/relayclient/GSNConfigurator';
+import { argumentBytes } from './sample-data';
 
 const Umbra = contract.fromArtifact('Umbra');
 const UmbraPaymaster = contract.fromArtifact('UmbraPaymaster');
 const TestToken = contract.fromArtifact('TestToken');
-
-const { RelayProvider } = require('@opengsn/gsn/dist/src/relayclient/');
-const gsnTestEnv = require('@opengsn/gsn/dist/GsnTestEnvironment').default;
-const { configureGSN } = require('@opengsn/gsn/dist/src/relayclient/GSNConfigurator');
-
-const { argumentBytes } = require('./sample-data');
-
 const { toWei } = web3.utils;
 const origProvider = web3.currentProvider;
 
 const tokenAmount = toWei('100', 'ether');
 
-describe('Umbra GSN', () => {
+describe('Umbra GSN', function() {
   const [
     owner,
     tollCollector,
@@ -42,7 +39,7 @@ describe('Umbra GSN', () => {
     // Start the GSN Test environment— this includes deployment of a relay hub, a forwarder, and
     // a stake manager, as well as starting a relay server. It also deploys a naive Paymaster, but we
     // will use our own
-    const gsnInstance = await gsnTestEnv.startGsn(Umbra.web3.currentProvider.wrappedProvider.host);
+    const gsnInstance = await GsnTestEnvironment.startGsn(Umbra.web3.currentProvider.wrappedProvider.host);
 
     // Save the forwader, as we'll need it when sending contract calls via our RelayProvider
     this.forwarder = gsnInstance.deploymentResult.forwarderAddress;
