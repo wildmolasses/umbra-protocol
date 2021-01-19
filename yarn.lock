@@ -2541,7 +2541,7 @@
     "@types/web3" "^1.2.2"
     web3 "1.2.6"
 
-"@opengsn/gsn@^2.0.0-beta.1.3":
+"@opengsn/gsn@^2.1.0":
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/@opengsn/gsn/-/gsn-2.1.0.tgz#d5b70c4be7bc4ab576c811d3e8d9d392582430c4"
   integrity sha512-QEHLc8ckiQA9Aa1iJH0+rN8aZSncaUzgonH5wX8YILmmYJCG+4IsdhhamkWotK2gINVY3z6jaEQKc/SYwizs1g==
@@ -8919,15 +8919,7 @@ ethereumjs-abi@0.6.5:
     bn.js "^4.10.0"
     ethereumjs-util "^4.3.0"
 
-ethereumjs-abi@0.6.8:
-  version "0.6.8"
-  resolved "https://registry.yarnpkg.com/ethereumjs-abi/-/ethereumjs-abi-0.6.8.tgz#71bc152db099f70e62f108b7cdfca1b362c6fcae"
-  integrity sha512-Tx0r/iXI6r+lRsdvkFDlut0N08jWMnKRZ6Gkq+Nmw75lZe4e6o3EkSnkaBP5NF6+m5PTGAr9JP43N3LyeoglsA==
-  dependencies:
-    bn.js "^4.11.8"
-    ethereumjs-util "^6.0.0"
-
-"ethereumjs-abi@git+https://github.com/ethereumjs/ethereumjs-abi.git":
+ethereumjs-abi@0.6.8, "ethereumjs-abi@git+https://github.com/ethereumjs/ethereumjs-abi.git":
   version "0.6.8"
   resolved "git+https://github.com/ethereumjs/ethereumjs-abi.git#1ce6a1d64235fabe2aaf827fd606def55693508f"
   dependencies:

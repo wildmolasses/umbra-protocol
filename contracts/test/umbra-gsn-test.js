@@ -4,7 +4,6 @@ const { expect } = require('chai');
 const ethers = require('ethers');
 const { RelayProvider } = require('@opengsn/gsn/dist/src/relayclient/RelayProvider');
 const { GsnTestEnvironment } = require('@opengsn/gsn/dist/GsnTestEnvironment');
-const { configureGSN } = require('@opengsn/gsn/dist/src/relayclient/GSNConfigurator');
 const { argumentBytes } = require('./sample-data');
 const { sumTokenAmounts, signMetaWithdrawal } = require('./utils');
 
@@ -42,11 +41,11 @@ describe('Umbra GSN', () => {
     // a stake manager, as well as starting a relay server. It also deploys a naive Paymaster, but we
     // will use our own
     const gsnInstance = await GsnTestEnvironment.startGsn(
-      UmbraRelayRecipient.web3.currentProvider.wrappedProvider.host
+      UmbraRelayRecipient.web3.currentProvider.wrappedProvider.host,
     );
 
     // Save the forwader, as we'll need it when sending contract calls via our RelayProvider
-    this.forwarder = gsnInstance.deploymentResult.forwarderAddress;
+    this.forwarder = gsnInstance.contractsDeployment.forwarderAddress;
 
     // Deploy the Umbra GSN wrapper & paymaster
     this.relayRecipient = await UmbraRelayRecipient.new(this.umbra.address, this.forwarder, {
@@ -62,20 +61,24 @@ describe('Umbra GSN', () => {
       // chainId: '*',
       relayLookupWindowBlocks: 1e5,
       preferredRelays: [gsnInstance.relayUrl],
-      relayHubAddress: gsnInstance.deploymentResult.relayHubAddress,
-      stakeManagerAddress: gsnInstance.deploymentResult.stakeManagerAddress,
+      relayHubAddress: gsnInstance.contractsDeployment.relayHubAddress,
+      stakeManagerAddress: gsnInstance.contractsDeployment.stakeManagerAddress,
       paymasterAddress: this.paymaster.address,
       verbose: false,
     };
-    const gsnConfig = configureGSN(gsnConfigParams);
+
+    // Configure our paymaster to use the global RelayHub instance
+    await this.paymaster.setRelayHub(gsnInstance.contractsDeployment.relayHubAddress, {
+      from: owner,
+    });
 
     // Create and save a RelayProvider. This web3 provder wraps the original web3
     // provider given by the OZ test environment, but also accounts for interaction with
     // contracts via GSN, and thus needs to know our gsn config as well
-    this.gsnProvider = new RelayProvider(origProvider, gsnConfig);
-
-    // Configure our paymaster to use the global RelayHub instance
-    await this.paymaster.setRelayHub(gsnInstance.deploymentResult.relayHubAddress, { from: owner });
+    this.gsnProvider = await RelayProvider.newProvider({
+      provider: origProvider,
+      config: gsnConfigParams,
+    }).init();
 
     // Fund our Paymaster to pay for gas. Actually, this funds the RelayHub with ETH our Paymaster
     // has the right to spend, since payments to the Paymaster are forwarded
@@ -95,7 +98,7 @@ describe('Umbra GSN', () => {
       this.token.address,
       tokenAmount,
       ...argumentBytes,
-      { from: payer, value: toll }
+      { from: payer, value: toll },
     );
 
     const contractBalance = await this.token.balanceOf(this.umbra.address);
@@ -136,9 +139,9 @@ describe('Umbra GSN', () => {
           // When making a contract call with the RelayProvider, an additional options param is
           // needed: the forwarder that will be used.
           forwarder: this.forwarder,
-        }
+        },
       ),
-      'Umbra: No balance to withdraw or fee exceeds balance'
+      'Umbra: No balance to withdraw or fee exceeds balance',
     );
   });
 
@@ -165,9 +168,9 @@ describe('Umbra GSN', () => {
           // When making a contract call with the RelayProvider, an additional options param is
           // needed: the forwarder that will be used.
           forwarder: this.forwarder,
-        }
+        },
       ),
-      'Umbra: Invalid Signature'
+      'Umbra: Invalid Signature',
     );
   });
 
@@ -178,7 +181,7 @@ describe('Umbra GSN', () => {
       receiverWallet,
       relayer,
       acceptor,
-      relayerTokenFee
+      relayerTokenFee,
     );
 
     await this.relayRecipient.withdrawTokenOnBehalf(
@@ -194,7 +197,7 @@ describe('Umbra GSN', () => {
         // When making a contract call with the RelayProvider, an additional options param is
         // needed: the forwarder that will be used.
         forwarder: this.forwarder,
-      }
+      },
     );
 
     const acceptorBalance = await this.token.balanceOf(acceptor);
@@ -211,7 +214,7 @@ describe('Umbra GSN', () => {
       receiverWallet,
       relayer,
       acceptor,
-      relayerTokenFee
+      relayerTokenFee,
     );
 
     await expectRevert(
@@ -228,9 +231,9 @@ describe('Umbra GSN', () => {
           // When making a contract call with the RelayProvider, an additional options param is
           // needed: the forwarder that will be used.
           forwarder: this.forwarder,
-        }
+        },
       ),
-      'Umbra: No balance to withdraw or fee exceeds balance'
+      'Umbra: No balance to withdraw or fee exceeds balance',
     );
   });
 });
