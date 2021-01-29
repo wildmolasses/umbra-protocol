@@ -1,4 +1,4 @@
-const { ethers, web3 } = require('hardhat');
+const { ethers, web3, network } = require('hardhat');
 const { expectEvent, expectRevert } = require('@openzeppelin/test-helpers');
 const { expect } = require('chai');
 const { RelayProvider } = require('@opengsn/gsn/dist/src/relayclient/RelayProvider');
@@ -43,18 +43,26 @@ describe('Umbra GSN', () => {
     await this.token.deployed();
     await this.token.mint(payer.address, tokenAmount).then(({hash}) => ethers.provider.waitForTransaction(hash));
 
+    // console.log(network.provider)
+    // console.log(ethers.provider.network)
+
+    // console.log(network.provider.connection)
+    // console.log(ethers.provider.connection)
+    // console.log(web3.currentProvider.Web3HTTPProviderAdapter_provider._url)
+
     // Start the GSN Test environment— this includes deployment of a relay hub, a forwarder, and
     // a stake manager, as well as starting a relay server. It also deploys a naive Paymaster, but we
     // will use our own
     const gsnInstance = await GsnTestEnvironment.startGsn(
-      UmbraRelayRecipient.web3.currentProvider.wrappedProvider.host
+      // UmbraRelayRecipient.web3.currentProvider.wrappedProvider.host
+      ethers.provider.connection.url
     );
 
     // Save the forwader, as we'll need it when sending contract calls via our RelayProvider
     this.forwarder = gsnInstance.deploymentResult.forwarderAddress;
 
     // Deploy the Umbra GSN wrapper & paymaster
-    this.relayRecipient = await UmbraRelayRecipient.deploy(this.umbra.address, this.forwarder).then(({hash}) => ethers.provider.waitForTransaction(hash));
+    this.relayRecipient = await UmbraRelayRecipient.deploy(this.umbra.address, this.forwarder);
     await this.relayRecipient.deployed();
     this.paymaster = await UmbraPaymaster.deploy(this.relayRecipient.address);
     await this.paymaster.deployed()
@@ -94,13 +102,13 @@ describe('Umbra GSN', () => {
   // Sending the token is done without GSN
   it('should allow someone to pay with a token', async () => {
     const toll = await this.umbra.toll();
-    await this.token.approve(this.umbra.address, tokenAmount, { from: payer });
-    const receipt = await this.umbra.sendToken(
+    await this.token.connect(payer).approve(this.umbra.address, tokenAmount);
+    const receipt = await this.umbra.connect(payer).sendToken(
       receiver,
       this.token.address,
       tokenAmount,
       ...argumentBytes,
-      { from: payer, value: toll }
+      { value: toll }
     );
 
     const contractBalance = await this.token.balanceOf(this.umbra.address);
@@ -157,7 +165,7 @@ describe('Umbra GSN', () => {
     const { v, r, s } = await signMetaWithdrawal(otherWallet, relayer.address, acceptor.address, relayerTokenFee);
 
     await expectRevert(
-      this.relayRecipient.withdrawTokenOnBehalf(
+      this.relayRecipient.connect(relayer).withdrawTokenOnBehalf(
         receiverWallet.address,
         acceptor.address,
         relayer.address,
@@ -166,7 +174,7 @@ describe('Umbra GSN', () => {
         r,
         s,
         {
-          from: relayer.address,
+          // from: relayer.address,
           // When making a contract call with the RelayProvider, an additional options param is
           // needed: the forwarder that will be used.
           forwarder: this.forwarder,
@@ -186,7 +194,7 @@ describe('Umbra GSN', () => {
       relayerTokenFee
     );
 
-    await this.relayRecipient.withdrawTokenOnBehalf(
+    await this.relayRecipient.connect(relayer).withdrawTokenOnBehalf(
       receiverWallet.address,
       acceptor.address,
       relayer.address,

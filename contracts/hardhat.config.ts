@@ -56,6 +56,12 @@ const config: HardhatUserConfig = {
   networks: {
     hardhat: {
       chainId: chainIds.hardhat,
+      accounts: {
+        count: 10,
+        initialIndex: 0,
+        mnemonic,
+        path: "m/44'/60'/0'/0",
+      },
     },
     goerli: createTestnetConfig('goerli'),
     kovan: createTestnetConfig('kovan'),
