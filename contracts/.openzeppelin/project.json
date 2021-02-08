@@ -2,7 +2,8 @@
   "manifestVersion": "2.2",
   "contracts": {
     "Umbra": "Umbra",
-    "UmpraPaymaster": "UmbraPaymaster"
+    "UmbraPaymaster": "UmbraPaymaster",
+    "UmbraRelayRecipient": "UmbraRelayRecipient"
   },
   "dependencies": {},
   "name": "umbra",
