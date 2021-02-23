@@ -15,6 +15,7 @@
     "husky": "^4.3.0",
     "lerna": "^3.22.1",
     "lint-staged": "^10.5.1",
+    "patch-package": "^6.2.2",
     "prettier": "^2.1.2",
     "rimraf": "^3.0.2",
     "typescript": "^4.0.3"
@@ -26,7 +27,7 @@
     "prettier": "lerna run prettier",
     "prepare": "lerna run prepare",
     "test": "lerna run test",
-    "postinstall": "patch-package"
+    "postinstall": "yarn patch-package"
   },
   "husky": {
     "hooks": {
