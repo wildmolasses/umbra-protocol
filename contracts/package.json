@@ -1,6 +1,6 @@
 {
   "name": "@umbra/contracts",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Contracts for the Umbra Protocol",
   "dependencies": {
     "@opengsn/gsn": "^2.1.0",
@@ -51,7 +51,8 @@
     "typescript": "^3.9.7"
   },
   "files": [
-    "typechain/**/*", "contracts/**/*"
+    "typechain/**/*",
+    "contracts/**/*"
   ],
   "types": "typechain/index.ts",
   "keywords": [
