@@ -1,6 +1,6 @@
 {
   "name": "@umbra/umbra-js",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Send and receive stealth payments",
   "main": "build/src/index.js",
   "types": "build/src/index.d.ts",
@@ -36,7 +36,7 @@
     "@types/chai": "^4.2.14",
     "@types/elliptic": "^6.4.12",
     "@types/mocha": "^8.0.4",
-    "@umbra/contracts": "^0.0.4",
+    "@umbra/contracts": "^0.0.5",
     "chai": "^4.2.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-chai-friendly": "^0.6.0",
