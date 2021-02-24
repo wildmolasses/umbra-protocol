@@ -15,6 +15,7 @@
     "build": "tsc --build",
     "clean": "rimraf build",
     "prepare": "yarn build",
+    "prepack": "yarn build",
     "prepublishOnly": "yarn lint && yarn test",
     "precommit": "lint-staged"
   },

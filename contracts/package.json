@@ -76,6 +76,7 @@
     "test": "concurrently --success first --kill-others \"hardhat node &>/dev/null\" \"hardhat test --network localhost\"",
     "typechain": "hardhat typechain",
     "prepare": "yarn run typechain",
+    "prepack": "yarn run typechain",
     "deploy": "yarn build && hardhat run scripts/deploy.js"
   },
   "volta": {

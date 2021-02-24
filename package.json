@@ -26,7 +26,7 @@
     "lint": "lerna run lint",
     "prettier": "lerna run prettier",
     "prepare": "lerna run prepare",
-    "prepack": "lerna run prepare",
+    "prepack": "lerna run prepack",
     "test": "lerna run test"
   },
   "husky": {
